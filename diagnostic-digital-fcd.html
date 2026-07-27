@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic digital — Fondation Chrétienne pour le Développement</title>
+
+<!--
+  NOTES POUR L'HÉBERGEMENT (à lire avant mise en ligne) :
+  1) Ce formulaire envoie les réponses par e-mail via FormSubmit (aucun backend requis).
+  2) Lors du tout premier envoi, FormSubmit adresse un e-mail de confirmation à
+     lesconceptstic@gmail.com : il faut cliquer sur le lien de validation qu'il contient
+     pour activer la réception automatique des formulaires suivants.
+  3) Le champ caché "_next" ci-dessous pointe vers une ancre de remerciement (#merci).
+     Une fois ce fichier hébergé (ex. https://votredomaine.com/diagnostic.html),
+     remplacez la valeur de "_next" par l'URL réelle suivie de "#merci"
+     (ex. https://votredomaine.com/diagnostic.html#merci) pour que la page de
+     remerciement s'affiche correctement après l'envoi.
+-->
+
+<style>
+  :root {
+    /* ===== Palette — ajustable à une charte graphique ===== */
+    --color-bg: #faf8f4;
+    --color-surface: #ffffff;
+    --color-primary: #1b2a4a;
+    --color-primary-dark: #10192e;
+    --color-accent: #b4922f;
+    --color-accent-soft: #f3ead0;
+    --color-text: #202433;
+    --color-text-muted: #5b6472;
+    --color-border: #e4ddce;
+    --color-success: #2f6f4e;
+    --color-danger: #a5402f;
+
+    --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    --radius: 10px;
+    --max-width: 760px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { max-width: 100%; display: block; }
+
+  a { color: var(--color-primary); }
+
+  /* ===== Layout shell ===== */
+  .page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ===== Header / hero ===== */
+  header.hero {
+    background: linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: #fff;
+    padding: 56px 20px 64px;
+    margin-bottom: -40px;
+  }
+
+  header.hero .hero-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  header.hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    line-height: 1.2;
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+
+  header.hero p {
+    color: rgba(255,255,255,0.82);
+    font-size: 1rem;
+    max-width: 56ch;
+    margin: 0;
+  }
+
+  /* ===== Step rail (signature element) ===== */
+  .steps {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 34px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+
+  .step {
+    flex: 1;
+    text-align: left;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.5);
+    position: relative;
+    padding-top: 14px;
+  }
+
+  .step::before {
+    content: attr(data-n);
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.7rem;
+  }
+
+  .step::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 26px;
+    right: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .step:last-child::after { display: none; }
+
+  .step span {
+    display: block;
+    margin-left: 30px;
+    line-height: 1.2;
+  }
+
+  .step.active { color: #fff; }
+  .step.active::before {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-primary-dark);
+  }
+
+  @media (max-width: 640px) {
+    .steps { display: none; }
+    .mobile-progress {
+      display: block !important;
+    }
+  }
+
+  .mobile-progress {
+    display: none;
+    height: 4px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 4px;
+    margin-top: 28px;
+    overflow: hidden;
+  }
+  .mobile-progress > div {
+    height: 100%;
+    width: 0%;
+    background: var(--color-accent);
+    transition: width 0.25s ease;
+  }
+
+  /* ===== Form card ===== */
+  form {
+    position: relative;
+    z-index: 1;
+  }
+
+  fieldset {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 28px 26px 30px;
+    margin: 0 0 22px;
+    box-shadow: 0 1px 2px rgba(20,20,30,0.03);
+    scroll-margin-top: 24px;
+  }
+
+  fieldset:first-of-type { margin-top: 20px; }
+
+  legend {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    padding: 0 6px;
+  }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+  .field:last-child { margin-bottom: 0; }
+
+  label.field-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 7px;
+    color: var(--color-text);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: -3px 0 8px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px 13px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  input[type="checkbox"]:focus-visible,
+  input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-color: var(--color-accent);
+  }
+
+  input:required, select:required { border-left: 3px solid var(--color-accent); }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 520px) {
+    .choice-grid { grid-template-columns: 1fr; }
+  }
+
+  .choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .choice:hover { border-color: var(--color-accent); }
+  .choice input { margin-top: 2px; }
+
+  .radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .radio-pill {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .radio-pill:hover { border-color: var(--color-accent); }
+  .radio-pill input { margin-right: 6px; }
+
+  /* Required marker */
+  .req { color: var(--color-danger); margin-left: 2px; }
+
+  /* ===== Submit area ===== */
+  .submit-block {
+    text-align: center;
+    padding-top: 6px;
+  }
+
+  button.submit {
+    appearance: none;
+    border: none;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 15px 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  button.submit:hover { background: var(--color-primary-dark); }
+  button.submit:active { transform: translateY(1px); }
+
+  .submit-note {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  /* ===== Thank-you section ===== */
+  #merci {
+    display: none;
+    text-align: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 56px 30px;
+    margin-top: 20px;
+  }
+  #merci .check {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--color-success);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.5rem;
+  }
+  #merci h2 {
+    font-family: var(--font-display);
+    color: var(--color-primary);
+    margin: 0 0 10px;
+  }
+  #merci p {
+    color: var(--color-text-muted);
+    max-width: 48ch;
+    margin: 0 auto;
+  }
+
+  body.show-thanks form,
+  body.show-thanks header.hero { display: none; }
+  body.show-thanks #merci { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">Diagnostic digital</span>
+    <h1>Faisons le point sur les besoins numériques de votre Église ou structure</h1>
+    <p>Ce court diagnostic nous permet de comprendre votre situation actuelle et de vous proposer, ensuite, un accompagnement digital réellement adapté à votre mission.</p>
+
+    <div class="steps" id="stepsRail">
+      <div class="step active" data-n="1"><span>Structure</span></div>
+      <div class="step" data-n="2"><span>Présence digitale</span></div>
+      <div class="step" data-n="3"><span>Problèmes</span></div>
+      <div class="step" data-n="4"><span>Besoins</span></div>
+      <div class="step" data-n="5"><span>Budget</span></div>
+      <div class="step" data-n="6"><span>Urgence</span></div>
+    </div>
+    <div class="mobile-progress"><div id="mobileProgressBar"></div></div>
+  </div>
+</header>
+
+<div class="page">
+
+  <form action="https://formsubmit.co/lesconceptstic@gmail.com" method="POST" id="diagForm">
+
+    <input type="hidden" name="_subject" value="Nouveau diagnostic digital reçu">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="#merci">
+
+    <!-- honeypot anti-spam (invisible, ne pas retirer) -->
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+    <!-- ============ SECTION 1 — Informations générales ============ -->
+    <fieldset id="section-1">
+      <p class="section-eyebrow">Étape 1 sur 6</p>
+      <legend>Informations générales</legend>
+
+      <div class="field">
+        <label class="field-label" for="nom">Nom de votre structure (Église, Fondation, Association…)<span class="req">*</span></label>
+        <input type="text" id="nom" name="Nom de la structure" required placeholder="Ex. : Église Évangélique de…">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="secteur">Type de structure<span class="req">*</span></label>
+        <select id="secteur" name="Type de structure" required>
+          <option value="" disabled selected>Sélectionnez une option</option>
+          <option>Église locale</option>
+          <option>Fondation / ONG chrétienne</option>
+          <option>Association religieuse</option>
+          <option>Institution / organisation à but non lucratif</option>
+          <option>Autre</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="taille">Taille approximative (membres, fidèles ou bénéficiaires réguliers)</label>
+        <select id="taille" name="Taille approximative">
+          <option value="" disabled selected>Sélectionnez une option</option>
+          <option>Moins de 50</option>
+          <option>50 à 200</option>
+          <option>200 à 500</option>
+          <option>Plus de 500</option>
+          <option>Je ne sais pas précisément</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="contact">Nom du responsable / contact<span class="req">*</span></label>
+        <input type="text" id="contact" name="Nom du contact" required placeholder="Prénom et nom">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="email">Adresse e-mail<span class="req">*</span></label>
+        <input type="email" id="email" name="E-mail" required placeholder="vous@exemple.com">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="tel">Téléphone / WhatsApp<span class="req">*</span></label>
+        <input type="tel" id="tel" name="Téléphone" required placeholder="+225 07 00 00 00 00">
+      </div>
+    </fieldset>
+
+    <!-- ============ SECTION 2 — Présence digitale actuelle ============ -->
+    <fieldset id="section-2">
+      <p class="section-eyebrow">Étape 2 sur 6</p>
+      <legend>Votre présence digitale actuelle</legend>
+
+      <div class="field">
+        <label class="field-label">Avez-vous un site web ?</label>
+        <div class="radio-row">
+          <label class="radio-pill"><input type="radio" name="Site web" value="Oui" required> Oui</label>
+          <label class="radio-pill"><input type="radio" name="Site web" value="Non" required> Non</label>
+          <label class="radio-pill"><input type="radio" name="Site web" value="Oui, mais à refaire" required> À refaire</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Réseaux sociaux actifs</label>
+        <p class="hint">Cochez tout ce qui s'applique</p>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="Réseau — Facebook" value="Oui"> Facebook</label>
+          <label class="choice"><input type="checkbox" name="Réseau — WhatsApp" value="Oui"> WhatsApp (statut / groupe)</label>
+          <label class="choice"><input type="checkbox" name="Réseau — YouTube" value="Oui"> YouTube</label>
+          <label class="choice"><input type="checkbox" name="Réseau — Instagram" value="Oui"> Instagram</label>
+          <label class="choice"><input type="checkbox" name="Réseau — Aucun" value="Oui"> Aucun pour le moment</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Outils de gestion utilisés aujourd'hui</label>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="Outil — Excel / tableur" value="Oui"> Excel / tableur</label>
+          <label class="choice"><input type="checkbox" name="Outil — Cahier papier" value="Oui"> Cahier / registre papier</label>
+          <label class="choice"><input type="checkbox" name="Outil — Logiciel dédié" value="Oui"> Logiciel de gestion dédié</label>
+          <label class="choice"><input type="checkbox" name="Outil — Aucun" value="Oui"> Aucun outil particulier</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ SECTION 3 — Problèmes rencontrés ============ -->
+    <fieldset id="section-3">
+      <p class="section-eyebrow">Étape 3 sur 6</p>
+      <legend>Problèmes rencontrés</legend>
+
+      <div class="field">
+        <label class="field-label">Quelles difficultés rencontrez-vous le plus souvent ?</label>
+        <p class="hint">Cochez tout ce qui s'applique</p>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="Problème — Communication avec fidèles/partenaires" value="Oui"> Communication avec les fidèles / partenaires</label>
+          <label class="choice"><input type="checkbox" name="Problème — Gestion des dons et vivres" value="Oui"> Gestion des dons, vivres et non-vivres</label>
+          <label class="choice"><input type="checkbox" name="Problème — Visibilité de l'action" value="Oui"> Manque de visibilité de vos actions</label>
+          <label class="choice"><input type="checkbox" name="Problème — Suivi des Églises partenaires" value="Oui"> Suivi des Églises ou structures partenaires</label>
+          <label class="choice"><input type="checkbox" name="Problème — Organisation interne" value="Oui"> Organisation interne / administrative</label>
+          <label class="choice"><input type="checkbox" name="Problème — Diffusion des supports" value="Oui"> Diffusion des supports (Bibles audio, films, etc.)</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="autre-probleme">Autre chose à préciser ? (facultatif)</label>
+        <textarea id="autre-probleme" name="Précisions problèmes" placeholder="Décrivez en quelques mots toute autre difficulté rencontrée…"></textarea>
+      </div>
+    </fieldset>
+
+    <!-- ============ SECTION 4 — Besoins prioritaires ============ -->
+    <fieldset id="section-4">
+      <p class="section-eyebrow">Étape 4 sur 6</p>
+      <legend>Besoins prioritaires</legend>
+
+      <div class="field">
+        <label class="field-label">Quels besoins souhaitez-vous couvrir en priorité ?<span class="req">*</span></label>
+        <p class="hint">Cochez au moins une option</p>
+        <div class="choice-grid">
+          <label class="choice"><input type="checkbox" name="Besoin — Site vitrine" value="Oui"> Site vitrine / de présentation</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Plateforme de dons en ligne" value="Oui"> Plateforme de dons en ligne</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Automatisation gestion" value="Oui"> Automatisation de la gestion (formulaires, suivi)</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Formation digitale des équipes" value="Oui"> Formation digitale des équipes</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Réseaux sociaux et visibilité" value="Oui"> Réseaux sociaux / visibilité</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Diffusion de supports" value="Oui"> Espace de diffusion des supports évangéliques</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Suivi des Églises partenaires" value="Oui"> Suivi des Églises partenaires (type CRM)</label>
+          <label class="choice"><input type="checkbox" name="Besoin — Autre" value="Oui"> Autre besoin</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ============ SECTION 5 — Budget et délai ============ -->
+    <fieldset id="section-5">
+      <p class="section-eyebrow">Étape 5 sur 6</p>
+      <legend>Budget indicatif et délai souhaité</legend>
+
+      <div class="field">
+        <label class="field-label" for="budget">Budget indicatif envisagé</label>
+        <select id="budget" name="Budget indicatif">
+          <option value="" disabled selected>Sélectionnez une option</option>
+          <option>Moins de 200 000 FCFA</option>
+          <option>200 000 – 500 000 FCFA</option>
+          <option>500 000 – 1 000 000 FCFA</option>
+          <option>Plus de 1 000 000 FCFA</option>
+          <option>Je ne sais pas encore</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="delai">Délai souhaité pour la mise en œuvre</label>
+        <select id="delai" name="Délai souhaité">
+          <option value="" disabled selected>Sélectionnez une option</option>
+          <option>Urgent — moins d'1 mois</option>
+          <option>1 à 3 mois</option>
+          <option>3 à 6 mois</option>
+          <option>Pas de délai précis</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <!-- ============ SECTION 6 — Niveau d'urgence ============ -->
+    <fieldset id="section-6">
+      <p class="section-eyebrow">Étape 6 sur 6</p>
+      <legend>Niveau d'urgence perçu</legend>
+
+      <div class="field">
+        <label class="field-label">Comment évaluez-vous la priorité de ce projet aujourd'hui ?<span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-pill"><input type="radio" name="Niveau d'urgence" value="Faible" required> Faible</label>
+          <label class="radio-pill"><input type="radio" name="Niveau d'urgence" value="Modérée" required> Modérée</label>
+          <label class="radio-pill"><input type="radio" name="Niveau d'urgence" value="Élevée" required> Élevée</label>
+          <label class="radio-pill"><input type="radio" name="Niveau d'urgence" value="Critique" required> Critique</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="submit-block">
+      <button type="submit" class="submit">Envoyer mon diagnostic</button>
+      <p class="submit-note">Vos réponses sont transmises de façon confidentielle et nous permettent de préparer une proposition adaptée à votre situation.</p>
+    </div>
+
+  </form>
+
+  <section id="merci">
+    <div class="check">✓</div>
+    <h2>Merci pour votre confiance</h2>
+    <p>Votre diagnostic a bien été transmis. Notre équipe va l'étudier avec attention et reviendra vers vous prochainement avec une proposition adaptée à votre structure.</p>
+  </section>
+
+</div>
+
+<script>
+  // Affiche la section de remerciement si l'URL contient #merci
+  // (utile après redirection FormSubmit une fois "_next" correctement configuré)
+  if (window.location.hash === '#merci') {
+    document.body.classList.add('show-thanks');
+  }
+
+  // Met en évidence l'étape en cours dans le rail de navigation (desktop)
+  // et fait progresser la barre mobile, via simple détection de scroll.
+  (function () {
+    var steps = document.querySelectorAll('.step');
+    var sections = document.querySelectorAll('fieldset');
+    var progressBar = document.getElementById('mobileProgressBar');
+
+    if (!sections.length) return;
+
+    function onScroll() {
+      var scrollPos = window.scrollY + window.innerHeight * 0.35;
+      var current = 0;
+
+      sections.forEach(function (sec, i) {
+        if (sec.offsetTop <= scrollPos) current = i;
+      });
+
+      steps.forEach(function (s, i) {
+        s.classList.toggle('active', i === current);
+      });
+
+      if (progressBar) {
+        var pct = ((current + 1) / sections.length) * 100;
+        progressBar.style.width = pct + '%';
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+
+</body>
+</html>
