@@ -11,11 +11,9 @@
   2) Lors du tout premier envoi, FormSubmit adresse un e-mail de confirmation à
      lesconceptstic@gmail.com : il faut cliquer sur le lien de validation qu'il contient
      pour activer la réception automatique des formulaires suivants.
-  3) Le champ caché "_next" ci-dessous pointe vers une ancre de remerciement (#merci).
-     Une fois ce fichier hébergé (ex. https://votredomaine.com/diagnostic.html),
-     remplacez la valeur de "_next" par l'URL réelle suivie de "#merci"
-     (ex. https://votredomaine.com/diagnostic.html#merci) pour que la page de
-     remerciement s'affiche correctement après l'envoi.
+  3) Le champ caché "_next" pointe vers : https://lctic.github.io/FCD/diagnostic-digital-fcd.html#merci
+     Si ce fichier est un jour déplacé vers une autre URL, pensez à mettre à jour
+     cette valeur en conséquence, sinon la page de remerciement ne s'affichera pas.
 -->
 
 <style>
@@ -414,7 +412,7 @@
     <input type="hidden" name="_subject" value="Nouveau diagnostic digital reçu">
     <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_next" value="#merci">
+    <input type="hidden" name="_next" value="https://lctic.github.io/FCD/diagnostic-digital-fcd.html#merci">
 
     <!-- honeypot anti-spam (invisible, ne pas retirer) -->
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
